@@ -1,17 +1,32 @@
 import { Config } from 'ziggy-js';
 
 export interface User {
-    id: number;
-    name: string;
-    email: string;
-    email_verified_at?: string;
+  id: number;
+  name: string;
+  email: string;
+  email_verified_at?: string;
+  permissions: [];
+  roles: [];
+}
+
+export interface PaginatedData <T = any> {
+  data: T[];
+  links: Record<string, string>
+}
+
+export interface Feature {
+  id: number;
+  name: string;
+  description: string;
+  user: User;
+  created_at: string;
 }
 
 export type PageProps<
-    T extends Record<string, unknown> = Record<string, unknown>,
+  T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
-    auth: {
-        user: User;
-    };
-    ziggy: Config & { location: string };
+  auth: {
+    user: User;
+  };
+  ziggy: Config & { location: string };
 };
