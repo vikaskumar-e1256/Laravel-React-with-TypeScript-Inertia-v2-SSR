@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\FeatureResource;
+use Inertia\Inertia;
 use App\Models\Feature;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\FeatureResource;
 
 class FeatureController extends Controller
 {
@@ -26,7 +27,7 @@ class FeatureController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Feature/Create');
     }
 
     /**
@@ -34,7 +35,14 @@ class FeatureController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000'
+        ]);
+        $data['user_id'] = Auth::user()->id;
+        Feature::create($data);
+        return redirect()->back()->with('success', 'Feature successfully created');
+
     }
 
     /**
@@ -42,7 +50,9 @@ class FeatureController extends Controller
      */
     public function show(Feature $feature)
     {
-        //
+        return Inertia::render('Feature/Show', [
+            'feature' => new FeatureResource($feature)
+        ]);
     }
 
     /**
@@ -50,7 +60,9 @@ class FeatureController extends Controller
      */
     public function edit(Feature $feature)
     {
-        //
+        return Inertia::render('Feature/Show', [
+            'feature' => new FeatureResource($feature)
+        ]);
     }
 
     /**
@@ -58,7 +70,12 @@ class FeatureController extends Controller
      */
     public function update(Request $request, Feature $feature)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000'
+        ]);
+        $feature->update($data);
+        return redirect()->back()->with('success', 'Feature successfully updated');
     }
 
     /**
@@ -66,6 +83,7 @@ class FeatureController extends Controller
      */
     public function destroy(Feature $feature)
     {
-        //
+        $feature->delete();
+        return redirect()->back()->with('success', 'Feature successfully deleted');
     }
 }
